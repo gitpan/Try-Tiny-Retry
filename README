@@ -2,7 +2,7 @@ NAME
     Try::Tiny::Retry - Extends Try::Tiny to allow retries
 
 VERSION
-    version 0.001
+    version 0.002
 
 SYNOPSIS
     Use just like Try::Tiny, but with "retry" instead of "try". By default,
@@ -10,11 +10,11 @@ SYNOPSIS
 
         use Try::Tiny::Retry;
 
-        retry   { ... }
-        catch   { ... }
-        finally { ... };
+        retry     { ... }
+        catch     { ... }
+        finally   { ... };
 
-    Or, you can retry only if the error matches some conditions:
+    You can retry only if the error matches some conditions:
 
         use Try::Tiny::Retry;
 
@@ -22,13 +22,21 @@ SYNOPSIS
         retry_if  { /^could not connect/ }
         catch     { ... };
 
-    Or, you can customize the number of tries and delay timing:
+    You can customize the number of tries and delay timing:
 
         use Try::Tiny::Retry ':all';
 
-        retry       { ... }
-        delay_exp   { 5, 1e6 } # 5 tries, 1 second exponential-backoff
-        catch       { ... };
+        retry     { ... }
+        delay_exp { 5, 1e6 } # 5 tries, 1 second exponential-backoff
+        catch     { ... };
+
+    You can run some code before each retry:
+
+        use Try::Tiny::Retry;
+
+        retry     { ... }
+        on_retry  { ... }
+        catch     { ... };
 
 DESCRIPTION
     This module extends Try::Tiny to allow for retrying a block of code
@@ -82,6 +90,17 @@ FUNCTIONS
 
         retry     { ... }
         delay_exp { 3, 1e5 };
+
+  on_retry
+        retry    { ... }
+        on_retry { $state->reset() }
+        catch    { ... };
+
+    The "on_retry" block runs before each "retry" block after the first
+    attempt. The block is passed the cumulative number of attempts as an
+    argument. The return value is ignored.
+
+    Only one "on_retry" block is allowed.
 
   delay
         retry { ... }

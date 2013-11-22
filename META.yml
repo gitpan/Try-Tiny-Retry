@@ -27,7 +27,7 @@ no_index:
 provides:
   Try::Tiny::Retry:
     file: lib/Try/Tiny/Retry.pm
-    version: 0.001
+    version: 0.002
 requires:
   Carp: 0
   Exporter: 0
@@ -41,5 +41,5 @@ resources:
   bugtracker: https://github.com/dagolden/Try-Tiny-Retry/issues
   homepage: https://github.com/dagolden/Try-Tiny-Retry
   repository: https://github.com/dagolden/Try-Tiny-Retry.git
-version: 0.001
+version: 0.002
 x_authority: cpan:DAGOLDEN
