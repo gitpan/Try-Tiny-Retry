@@ -4,7 +4,7 @@
       "David Golden <dagolden@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 5.006, CPAN::Meta::Converter version 2.132830",
+   "generated_by" : "Dist::Zilla version 5.012, CPAN::Meta::Converter version 2.133380",
    "license" : [
       "apache_2_0"
    ],
@@ -32,7 +32,7 @@
       },
       "develop" : {
          "requires" : {
-            "Dist::Zilla" : "5.006",
+            "Dist::Zilla" : "5.012",
             "Dist::Zilla::PluginBundle::DAGOLDEN" : "0.059",
             "File::Spec" : "0",
             "File::Temp" : "0",
@@ -73,7 +73,7 @@
    "provides" : {
       "Try::Tiny::Retry" : {
          "file" : "lib/Try/Tiny/Retry.pm",
-         "version" : "0.002"
+         "version" : "0.003"
       }
    },
    "release_status" : "stable",
@@ -88,7 +88,10 @@
          "web" : "https://github.com/dagolden/Try-Tiny-Retry"
       }
    },
-   "version" : "0.002",
-   "x_authority" : "cpan:DAGOLDEN"
+   "version" : "0.003",
+   "x_authority" : "cpan:DAGOLDEN",
+   "x_contributors" : [
+      "David Steinbrunner <dsteinbrunner@pobox.com>"
+   ]
 }
 

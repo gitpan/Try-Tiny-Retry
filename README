@@ -2,7 +2,7 @@ NAME
     Try::Tiny::Retry - Extends Try::Tiny to allow retries
 
 VERSION
-    version 0.002
+    version 0.003
 
 SYNOPSIS
     Use just like Try::Tiny, but with "retry" instead of "try". By default,
@@ -58,8 +58,10 @@ FUNCTIONS
     if an exception is thrown, the block may be executed again, depending on
     the "retry_if" and "delay" blocks.
 
-    By default, if no "retry_if" blocks are provided, retries depend only on
-    the "delay" block.
+    If one or more "retry_if" blocks are provided, as long as any of them
+    evaluate to true, a retry will be attempted unless the result of the
+    "delay" block indicates otherwise. If none of them evaluate to true, no
+    retry will be attempted and the "delay" block will not be called.
 
     If no "delay" block is provided, the default will be 10 tries with a
     random delay up to 100 milliseconds with an exponential backoff. (See
@@ -71,7 +73,8 @@ FUNCTIONS
         retry_if { /^could not connect/ }
         catch    { ... };
 
-    A "retry_if" block controls whether a retry should be attempted.
+    A "retry_if" block controls whether a retry should be attempted after an
+    exception (assuming there are any retry attempts remaining).
 
     The block is passed the cumulative number of attempts as an argument.
     The exception caught is provided in $_, just as with "catch". It should
@@ -90,6 +93,13 @@ FUNCTIONS
 
         retry     { ... }
         delay_exp { 3, 1e5 };
+
+    If you wish the exception to be rethrown if all "retry_if" blocks return
+    false, you must use a "catch" block to do so:
+
+        retry    { ... }
+        retry_if { /^could not connect/ }
+        catch    { die $_ };
 
   on_retry
         retry    { ... }
@@ -110,13 +120,19 @@ FUNCTIONS
         }
         catch { ... };
 
-    The "delay" block is executed when the "retry" block throws an exception
-    to determine if a retry should be attempted and to manage the delay
-    between attempts.
+    The "delay" block controls the number of attempts and the delay between
+    attempts.
 
     The block is passed the cumulative number of attempts as an argument. If
     the "delay" block returns an undefined value, no further retries will be
-    made and the most recent exception will be rethrown.
+    made.
+
+    If you wish the exception to be rethrown if all attempts fail, you must
+    use a "catch" block to do so:
+
+        retry    { ... }
+        delay    { ... }
+        catch    { die $_ };
 
     Only one "delay" block is allowed.
 
@@ -171,6 +187,9 @@ SUPPORT
 
 AUTHOR
     David Golden <dagolden@cpan.org>
+
+CONTRIBUTOR
+    David Steinbrunner <dsteinbrunner@pobox.com>
 
 COPYRIGHT AND LICENSE
     This software is Copyright (c) 2013 by David Golden.
