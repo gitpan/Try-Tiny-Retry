@@ -2,7 +2,7 @@ NAME
     Try::Tiny::Retry - Extends Try::Tiny to allow retries
 
 VERSION
-    version 0.003
+    version 0.004
 
 SYNOPSIS
     Use just like Try::Tiny, but with "retry" instead of "try". By default,
@@ -107,8 +107,9 @@ FUNCTIONS
         catch    { ... };
 
     The "on_retry" block runs before each "retry" block after the first
-    attempt. The block is passed the cumulative number of attempts as an
-    argument. The return value is ignored.
+    attempt. The exception caught is provided in $_. The block is passed the
+    cumulative number of attempts as an argument. The return value is
+    ignored.
 
     Only one "on_retry" block is allowed.
 

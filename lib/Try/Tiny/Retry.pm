@@ -4,7 +4,7 @@ use warnings;
 
 package Try::Tiny::Retry;
 # ABSTRACT: Extends Try::Tiny to allow retries
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 use parent 'Exporter';
 our @EXPORT      = qw/retry retry_if on_retry try catch finally/;
@@ -94,7 +94,7 @@ sub retry(&;@) {           ## no critic
         my $count = 0;
         RETRY: {
             $count++;
-            my $redo;
+            my ( $redo, $err );
             try {
                 # evaluate the try block in the correct context
                 if ($wantarray) {
@@ -108,7 +108,7 @@ sub retry(&;@) {           ## no critic
                 }
             }
             catch {
-                my $err = $_;
+                $err = $_;
                 # if there are conditions, rethrow unless at least one is met
                 if (@conditions) {
                     my $met = 0;
@@ -123,7 +123,11 @@ sub retry(&;@) {           ## no critic
                 # if here, then we want to try again
                 $redo++;
             };
-            $on_retry->($count) if defined $on_retry && $redo;
+            if ( defined $on_retry && $redo ) {
+                local $_ = $err;
+                $on_retry->($count);
+            }
+
             redo RETRY if $redo;
         }
         return $wantarray ? @ret : $ret[0];
@@ -150,7 +154,7 @@ Try::Tiny::Retry - Extends Try::Tiny to allow retries
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -258,8 +262,8 @@ false, you must use a C<catch> block to do so:
     catch    { ... };
 
 The C<on_retry> block runs before each C<retry> block after the first attempt.
-The block is passed the cumulative number of attempts as an argument.  The
-return value is ignored.
+The exception caught is provided in C<$_>.  The block is passed the cumulative
+number of attempts as an argument.  The return value is ignored.
 
 Only one C<on_retry> block is allowed.
 
